@@ -1,0 +1,24 @@
+{
+  "name": "qorbital",
+  "version": "1.0.0",
+  "description": "qorbital game engine",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NovaSagittarii/qorbital.git"
+  },
+  "author": "novasagittarii enemyoflamb",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NovaSagittarii/qorbital/issues"
+  },
+  "homepage": "https://github.com/NovaSagittarii/qorbital#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "https": "^1.0.0",
+    "socket.io": "^2.3.0"
+  }
+}
