@@ -1,0 +1,329 @@
+* {
+  font-family: 'Share', cursive;
+}
+html{
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  width: 100vw;
+  overflow-x: hidden;
+  background-image: url("https://cdn.glitch.com/3a5b7101-2500-4a87-898e-1025c7f3ae9b%2Fimage%20(9).png?v=1601179197190");
+  background-repeat: no-repeat;
+  background-size: cover;
+    background-attachment: fixed;
+
+}
+textarea {
+  resize: none;
+}
+/* menu */
+#menu {
+  text-align: center;
+  height: 90vh;
+  margin-top: 21vh;
+  font-size: 2em;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100vw;
+
+  padding: 0;
+  color: white;
+
+}
+#menu textarea{
+  position: relative;
+  width: 20vw;
+  text-align: center;
+  height: 1.4em;
+  vertical-align: middle;
+  padding: 0;
+  box-sizing: border-box;
+  border: 2px solid black;
+  border-right: 0;
+  outline: none;
+  min-height: 30px;
+  min-width: 200px;
+  font-size: max(1.5vw, 20px);
+}
+#menu img{
+  animation-name: loadLogo;
+  animation-duration: 1.5s;
+}
+#logo{
+  width: 30vw;
+}
+#cc1{
+  bottom: 3vh;
+  right: 3vw;
+}
+#cc2{
+  top: 2vh;
+  left: 3vh;
+}
+.cornerCut{
+  position: absolute;
+  width: 8vw;
+}
+#menu button{
+  width: 5vw;
+  min-width: 40px;
+  min-height: 30px;
+  position: relative;
+  vertical-align: middle;
+  padding: 0;
+  box-sizing: border-box;
+  border: 2px solid black;
+  border-left: 0;
+  outline: none;
+  height: 1.4em;
+  font-size: max(1.5vw, 20px);
+  transition: ease-in-out 0.2s all;
+}
+#menu button:hover{
+  /*animation-name: startHover;
+  animation-duration: 1s;*/
+  color: white; background-color: #FFD700;
+}
+
+
+@keyframes startHover{
+  0%  {color: #999999; background-color: #FAFAD2	}
+  25%  {color: #cccccc; background-color: #F0E68C		}
+  100% {color: white; background-color: #FFD700}
+}
+@keyframes loadLogo {
+  0%   {opacity: 0.0; margin-top: -1vh;}
+  25%  {opacity: 0.3;margin-top: -0.5vh;}
+  50%  {opacity: 0.65;margin-top: 0vh;}
+  100% {opacity: 1;margin-top: 0vh;}
+}
+#inputArea{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: 0;
+}
+/* Modal */
+
+#userModal{
+  position: fixed;
+  display: inline-block;
+  background-color: white;
+  border-radius: 5px;
+  width: 50vw;
+  height: 60vh;
+   top: 20vh;
+  margin-left: auto;
+  margin-right: auto;
+  right: 0;
+  left: 0;
+  z-index: 4;
+  opacity: 0;
+  display: none;
+
+}
+#userModal h1{
+  font-size: 2.5vw;
+  color: #FFD700;
+   text-align: center;
+}
+#linkHostLobby{
+  position: absolute;
+  top: 49vh;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+   transition: ease-in-out 0.3s all;
+  border-bottom: 1vh transparent solid;
+  width: 55%;
+}
+#linkHostLobby:hover{
+  border-bottom: 1vh solid #FFD700;
+}
+#modalTitle{
+  border-bottom: 2px solid #FFD700;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+}
+#lobbyListContainer{
+  border: 5px solid #ededed;
+  width: 80%;
+  background-color: #ededed;
+  height: 60%;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 5px;
+  overflow-y: scroll;
+}
+.lobbyBlock{
+  height: 3vh;
+  background-color: #808080;
+  vertical-align: middle;
+  border: 2px solid #808080;
+  border-radius: 5px;
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0.5vh;
+  color: white;
+  padding: 0.25vw;
+}
+.lobbyTitle{
+  float: left;
+
+}
+.lobbyPpl{
+  float: right;
+  margin-right: 0.5vw;
+
+}
+.lobbyBlock button{
+  float: right;
+  vertical-align: middle;
+  border: 0;
+  background-color: #808080;
+  width: 4vw;
+  height: 3vh;
+  border-radius: 5px;
+  color: white;
+  transition: ease-in-out 0.3s all;
+}
+.lobbyBlock button:hover{
+  background-color: white;
+  color: #FFD700;
+}
+/*
+#modalBD{
+  opacity: 0.2;
+  z-index: 2;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}
+#modalTitle{
+  z-index: 3;
+  opacity: 1;
+}
+*/
+#modal-overlay{
+  z-index: 2;
+  opacity: 0;
+  display: none;
+  background-color: black;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+}
+
+/* Bottom Menu Area */
+#bottomMenu{
+  font-size: max(3.5vw, 20px);
+  color: #FFD700;
+  position: absolute;
+  top: 75vh;
+  width: 100vw;
+   animation-name: loadLogo;
+  animation-duration: 1.5s;
+}
+#linkPN{
+    position: absolute;
+    left: 10vw;
+    transition: ease-in-out 0.3s all;
+    border-bottom: 1vh transparent solid;
+}
+#linkPN:hover{
+  border-bottom: 1vh solid #FFD700;
+}
+#createGame{
+  position: absolute;
+  right: 10vw;
+  transition: ease-in-out 0.3s all;
+  border-bottom: 1vh transparent solid;
+}
+#createGame:hover{
+  border-bottom: 1vh solid #FFD700;
+}
+
+/* Patch Notes Area */
+@keyframes loadCont{
+  0%   {opacity: 0.0;}
+  25%  {opacity: 0.1;}
+  50%  {opacity: 0.2;}
+  100% {opacity: 0.3;}
+}
+#patchNotes{
+  height: 100vh;
+  background-color: white;
+  width: 100vw;
+  background-image: url("https://cdn.glitch.com/3a5b7101-2500-4a87-898e-1025c7f3ae9b%2FNew%20Project%20(24).png?v=1601193734179");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+#patchNotesLogo{
+  width: 30vw;
+  margin-left: 3vw;
+  display: inline;
+  margin-bottom: 0;
+}
+#patchNotesContentContainer{
+  margin: 0;
+  width: 90%;
+  margin-left: auto;
+   overflow-y: hidden;
+  margin-right: auto;
+  height: 70%;
+  min-height: (600px);
+  box-shadow: 7px 7px 22px 0px rgba(0,0,0,0.75);
+  background-color: black;
+  border: 10px solid black;
+  border-radius: 5px;
+  transition: 0.3s all ease-in-out;
+}
+.pnccClicked{
+   overflow-y: scroll !important;
+}
+#patchNotesContentContainer::-webkit-scrollbar {
+    background-color: white;
+    width: 0.5vw;
+    border-radius: 3px;
+}
+#patchNotesContentContainer::-webkit-scrollbar-thumb{
+	border-radius: 10px;
+	background-color: #FFD700;
+}
+
+
+
+
+.scrolledOn{
+  animation-name: loadLogo;
+  animation-duration: 0.7s;
+  opacity: 1;
+}
+.hide{
+  opacity: 0;
+}
+.scrolledOnCont{
+  animation-name: loadCont;
+  animation-duation: 1s;
+  opacity: 0.3;
+}
+.patchNote{
+  color:  #FFD700;
+  margin-left: 3vw;
+}
+.patchNote h1{
+  font-weight: bold;
+  opacity: 1;
+}
+.patchNote p{
+  margin-left: 2vw;
+  opacity: 1;
+}
+  
