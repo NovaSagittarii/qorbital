@@ -21,7 +21,7 @@ class Player extends Entity {
     this.state = 0;
     this.f = 0;
     this.xv2 = this.yv2 = 0;
-    this.id = gameroom.playerIdCounter++ % 128;
+    this.id = (gameroom.playerIdCounter++ %= 128);
   }
   respawn(){
     this.hp = this.maxhp;

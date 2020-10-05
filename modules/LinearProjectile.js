@@ -11,6 +11,7 @@ class LinearProjectile extends Projectile {
     this.ud = Math.pow(Math.hypot(this.xv, this.yv), 2); // u val denominator
     this.type = type;
     this.d = 200;
+    this.id = (parent.room.projectileIdCounter++ %= 1024);
   }
   update(){
     this.x += this.xv;
