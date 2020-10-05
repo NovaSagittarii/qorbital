@@ -10,13 +10,13 @@ class LinearProjectile extends Projectile {
     this.yv = Math.sin(this.a)*this.v + parent.yv2;
     this.ud = Math.pow(Math.hypot(this.xv, this.yv), 2); // u val denominator
     this.type = type;
-    this.d = 200;
-    this.id = (parent.room.projectileIdCounter++ %= 1024);
+    this.d = 8;
+    this.id = (parent.room.projectileIdCounter = ++parent.room.projectileIdCounter%1024);
   }
   update(){
     this.x += this.xv;
     this.y += this.yv;
-    return --this.d <= 0;
+    -- this.d;
   }
   collidesWith(that){
     /*

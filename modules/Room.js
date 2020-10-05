@@ -15,9 +15,9 @@ class Room {
     this.spawnX = this.spawnY = 200;
     this.height = this.width = 400;
     this.capacity = Math.min(capacity || 4, 16);
-    this.projectiles = new Array3D(200, 10, 10);
-    this.playersIndex = new Array3D(200, 10, 10);
-    this.entities = new Array3D(200, 10, 10);
+    this.projectiles = new Array3D(200, 10, 10, true);
+    this.playersIndex = new Array3D(200, 10, 10, true);
+    this.entities = new Array3D(200, 10, 10, true);
     this.players = {};
     this.playerIdCounter = 0;
     this.entityIdCounter = 0;
@@ -26,46 +26,48 @@ class Room {
   }
   connect(socket, name){
     this.players[socket.id] = new Player(this, socket, name);
-    this.playersIndex.push(this.players[socket.id]);
+    this.playersIndex.add(this.players[socket.id]);
   }
   disconnect(socketid){
-    this.playersIndex.splice(this.playersIndex.indexOf(this.players[socketid]), 1);
+    if(this.players[socketid] === undefined) return;
+    this.playersIndex.remove(this.players[socketid]);
     delete this.players[socketid];
   }
   update(){
-    for(let i = 0; i < this.playersIndex.A1D.length; i ++) this.playersIndex.A1D[i].update();
-    for(let i = 0; i < this.entities.A1D.length; i ++) this.entities.A1D[i].update();
-    for(let i = 0; i < this.projectiles.A1D.length; i ++){
-      const p = this.projectiles.A1D[i];
-      for(let j = 0; j < this.playersIndex.A1D.length; j ++){
-        if(!p || p.parent === this.playersIndex.A1D[j] || p.d <= 0) continue;
-        if(p.collidesWith(this.playersIndex.A1D[j])){
-          this.playersIndex.A1D[j].xv += p.xv/10;
-          this.playersIndex.A1D[j].yv += p.yv/10;
-          // console.log(this.playersIndex[j].xv, this.playersIndex[j].yv, p.xv, p.yv);
+    this.playersIndex.updateAll(e => e.update());
+    this.entities.updateAll(e => e.update());
+    this.projectiles.updateAll((p, chunk) => {
+      p.update();
+      const q = this.playersIndex.contextFrom(chunk.x, chunk.y);
+      for(let i = 0; i < q.length; i ++){
+        if(p.parent === q[i]) continue;
+        if(p.collidesWith(q[i])){
+          q.xv += p.xv/10;
+          q.yv += p.yv/10;
           p.d = 0;
+          break;
         }
       }
-    }
+    }, p => {
+      if(p.d <= 0) this.projectiles.remove(p);
+    });
   }
   broadcastData(){
-    /*const gpdat = this.playersIndex.map(p => p.export());
-    const gdat = {
-      q: this.projectiles.map(e => e && e.broadcast ? e.export() : null),
-      e: this.entities.map(e => e && e.export() ? e.export() : null)
-    };
-    for(let i = 0; i < this.playersIndex.length; i ++){
-      // non optimized data transmission !!
-      const p = this.playersIndex[i];
-      gdat.p = gpdat.filter(q => q.id !== p.id);
-      gdat.s = p.export(true);
-      p.socket.emit('update', JSON.stringify(gdat));
-    }
-    for(let i = this.projectiles.length; i >= 0; i --){
-      const q = this.projectiles[i];
-      if(!q) continue;
-      if(q.update()) remove(this.projectiles, i);
-    }*/
+    this.playersIndex.forEachChunk(chunk => {
+      const cpdat = chunk.getContextElements().map(p => p.export()); // chunk player data
+      const cdat = { // chunk data
+        q: this.projectiles.chunkFrom(chunk.x, chunk.y).getContextElements().map(e => e && e.export() ? e.export() : null),
+        e: this.entities.chunkFrom(chunk.x, chunk.y).getContextElements().map(e => e && e.export() || null)
+      };
+      const a = chunk.a;
+      for(let i = a.length-1; i >= 0; i --){
+        // non optimized data transmission !! (still)
+        const p = a[i];
+        cdat.p = cpdat.filter(q => q.id !== p.id);
+        cdat.s = p.export(true);
+        p.socket.emit('update', JSON.stringify(cdat));
+      }
+    });
   }
   resume(){
     this.updateInterval = setInterval(this.update.bind(this), Math.round(1e3 / config.targetFrameRate));
