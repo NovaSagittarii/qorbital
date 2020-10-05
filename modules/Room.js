@@ -54,6 +54,7 @@ class Room {
   }
   broadcastData(){
     this.playersIndex.forEachChunk(chunk => {
+      if(chunk.a.length === 0) return; // don't bother if there aren't any players in there
       const cpdat = chunk.getContextElements().map(p => p.export()); // chunk player data
       const cdat = { // chunk data
         q: this.projectiles.chunkFrom(chunk.x, chunk.y).getContextElements().map(e => e && e.export() ? e.export() : null),

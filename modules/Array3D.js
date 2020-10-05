@@ -5,7 +5,7 @@ class Array3DChunk {
     this.x = i;
     this.y = j;
     this.a = [];
-    this.context = []; // the 8 chunks that surround the Array3DChunk
+    this.context = []; // the 8 chunks that surround the Array3DChunk, as well as itself
     this.size = 0; // used when skipping already moved (newly added) elements
   }
   add(e){
@@ -47,7 +47,6 @@ class Array3D {
         const c = this.A3D[i][j];
         for(let k = -1; k <= 1; k ++){
           for(let l = -1; l <= 1; l ++){
-            if(k === 0 && l === 0) continue;
             if(this.circular) this.A3D[(i+k+widthChunks)%widthChunks][(j+l+heightChunks)%heightChunks].context.push(c);
             else if(i+k >= 0 && j+l >= 0 && i+k < widthChunks && j+l < heightChunks) this.A3D[i+k][j+l].context.push(c);
           }
