@@ -12,7 +12,6 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
     background-attachment: fixed;
-
 }
 textarea {
   resize: none;
@@ -297,10 +296,6 @@ textarea {
 	border-radius: 10px;
 	background-color: #FFD700;
 }
-
-
-
-
 .scrolledOn{
   animation-name: loadLogo;
   animation-duration: 0.7s;
@@ -326,4 +321,3 @@ textarea {
   margin-left: 2vw;
   opacity: 1;
 }
-  
