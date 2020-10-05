@@ -1,7 +1,7 @@
-const b2rk = TWO_PI/255; // binary to radians constant
-const b2rk16 = TWO_PI/65535;
-const r2bk = 255/TWO_PI;
-const r2bk16 = 65535/TWO_PI;
+const b2rk = (2*Math.PI)/255; // binary to radians constant
+const b2rk16 = (2*Math.PI)/65535;
+const r2bk = 255/(2*Math.PI);
+const r2bk16 = 65535/(2*Math.PI);
 const Entity = require('./Entity.js');
 class Player extends Entity {
   constructor(gameroom, socket, name, role){
