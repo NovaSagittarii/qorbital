@@ -13,48 +13,33 @@ const b2rk16 = TWO_PI/65535;
 const r2bk = 255/TWO_PI;
 const r2bk16 = 65535/TWO_PI;
 let socket;
-function setup() {
-  const sendable = "wasd";
-  const canvas = createCanvas(windowWidth, windowHeight);
-  canvas.parent('display');
-  // backgroundImage = loadImage('/assets/bkgd.jpg');
-  // noCursor();
-  rectMode(CENTER);
-  textAlign(CENTER, CENTER);
-  // textFont(font);
-  strokeCap(PROJECT);
-  /*socket = io.connect('http://47.147.17.164:3000');
-  socket.on('update', update);
-  socket.on('setConfig', updateConfig);
-  socket.emit('requestConfig', name);*/
-  // cx = width >> 1;
-  // cy = cy_c = height >> 1;
-  // cy_a = height * 2/3;
-  noLoop();
-}
-function keyPressed(){
-  keys[keyCode] = true;
+
+let mouseX, mouseY, width, height;
+function updateMouseCoordinates(mouseEvent){
+  mouseX = mouseEvent.x;
+  mouseY = mouseEvent.y;
   updateState();
 }
-function keyReleased(){
-  keys[keyCode] = false;
+function keyPressed(keyboardEvent){
+  keys[keyboardEvent.keyCode] = true;
   updateState();
 }
-function mouseMoved(){
+function keyReleased(keyboardEvent){
+  keys[keyboardEvent.keyCode] = false;
   updateState();
 }
-function mouseDragged(){
-  updateState();
+// mouseDragged() and mouseMoved() go under 'mousemove' and simply call updateMouseCoordinates()
+function mousePressed(mouseEvent){
+  mouseButtons[mouseEvent.button] = true;
+  updateMouseCoordinates(mouseEvent);
 }
-function mousePressed(){
-  // idk you might have to assume some game states or something? idk man
-  // console.log(mouseButton);
-  mouseButtons[mouseButton==="left"?0:mouseButton==="middle"?1:2] = true;
-  updateState();
+function mouseReleased(mouseEvent){
+  mouseButtons[mouseEvent.button] = false;
+  updateMouseCoordinates(mouseEvent);
 }
-function mouseReleased(){
-  mouseButtons[mouseButton==="left"?0:mouseButton==="middle"?1:2] = false;
-  updateState();
+function updateWindowDimensions(){
+  width = window.innerWidth;
+  height = window.innerHeight;
 }
 function updateState(){
   if(socket){
@@ -76,10 +61,27 @@ function joinGame(name) {
   // socket.on('updateNameList', updateNameList);
   // socket.on('setConfig', updateConfig);
   socket.emit('requestConfig', name);
+  updateWindowDimensions();
+
+  document.getElementById("display").appendChild(app.view);
+  window.addEventListener('mousedown', mousePressed);
+  window.addEventListener('mouseup', mouseReleased);
+  window.addEventListener('mousemove', updateMouseCoordinates);
+  window.addEventListener('keydown', keyPressed);
+  window.addEventListener('keyup', keyReleased);
+  window.addEventListener('resize', updateWindowDimensions);
   loop();
+  // loop();
 }
 let dat = {};
 function update(raw){
   dat = JSON.parse(raw);
   // console.log(dat);
+}
+let drawInterval;
+function loop(){
+  drawInterval = setInterval(draw, 1000/60);
+}
+function noLoop(){
+  clearInterval(drawInterval);
 }

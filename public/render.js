@@ -1,73 +1,75 @@
-const projectiles = [];
-function draw(){
-  if(dat.s === undefined) return;
-  background(0);
-  push();
-  translate(width/2-dat.s.x, height/2-dat.s.y);
-  const rd = 100; // reference dist (idk)
-  const rx = Math.round(dat.s.x/rd)*rd; // reference x
-  const ry = Math.round(dat.s.y/rd)*rd;
+const Application = PIXI.Application, Container = PIXI.Container, loader = PIXI.loader, resources = PIXI.loader.resources, TextureCache = PIXI.utils.TextureCache, Sprite = PIXI.Sprite;
 
-  push();
-  stroke(255, 100);
-  strokeWeight(3);
-  for(let i = -10; i < 10; i ++){
-    line(rx + rd*i, ry-1000, rx + rd*i, ry+1000);
-    line(rx-1000, ry + rd*i, rx+1000, ry + rd*i);
-  }
-  pop();
+const app = new Application({
+  width: 1080,
+  height: 720,
+  antialiasing: true,
+  transparent: false,
+  resolution: 1
+});
 
-  fill(255);
-  text(dat.s.t, dat.s.x, dat.s.y-30);
-  text(~~dat.s.x + "," + ~~dat.s.y, dat.s.x, dat.s.y-50);
-  ellipse(dat.s.x, dat.s.y, 40, 40);
-  if(dat.p){
-    for(let i = 0; i < dat.p.length; i ++){
-      const p = dat.p[i];
-      fill(255);
-      text(p.t, p.x, p.y-30);
-      text(`(${~~p.x}, ${~~p.y})`, p.x, p.y-50);
-      ellipse(p.x, p.y, 40, 40);
+function loadSprite(path){
+  return new Promise((resolution, rej) => {
+    try {
+      const TD = new TextDecoder("utf-8");
+      const loader = new PIXI.loaders.Loader("/assets/");
+      loader.add(path+".skel", { xhrType: PIXI.loaders.Resource.XHR_RESPONSE_TYPE.BUFFER });
+      loader.add(path+".png");
+      loader.add(path+".atlas");
+      loader.load((l, res) => {
+        let rawSD;
+        console.log(res);
+        /*if(false) //TD.decode(res[path+".skel"].data).slice(2, 10) === "skeleton")
+          rawSD = JSON.parse(TD.decode(res[path+".skel"].data));
+        else*/ {
+          const SB = new SkeletonBinary();
+          SB.data = new Uint8Array(res[path+".skel"].data);
+          SB.initJson();
+          rawSD = SB.json;
+        }
+        const rawAD = res[path+".atlas"].data;
+        const SAL = new PIXI.spine.core.AtlasAttachmentLoader(new PIXI.spine.core.TextureAtlas(rawAD, (line, callback) => callback(PIXI.BaseTexture.fromImage(line))));
+        resolution(new PIXI.spine.core.SkeletonJson(SAL).readSkeletonData(rawSD));
+      });
+    } catch (err) {
+      rej(err);
     }
-  }
-  if(dat.q){
-    for(let i = 0; i < dat.q.length; i ++){
-      const q = dat.q[i];
-      if(q === null) continue;
-      projectiles[i] = q;
-      projectiles[i].f = frameCount;
-      projectiles[i].dx = (q.x2-q.x)/q.t;
-      projectiles[i].dy = (q.y2-q.y)/q.t;
-    }
-  }
-  push();
-  strokeWeight(5);
-  for(let i = 0; i < projectiles.length; i ++){
-    if(!projectiles[i]) continue;
-    const q = projectiles[i];
-    stroke(255,0,0);
-    noFill();
-    ellipse(q.x + q.dx*(frameCount-q.f), q.y + q.dy*(frameCount-q.f), 10, 10);
-    line(q.x + q.dx*(frameCount-q.f), q.y + q.dy*(frameCount-q.f), q.x + q.dx*(frameCount-q.f-1), q.y + q.dy*(frameCount-q.f-1));
-    noStroke();
-    text(q.t, q.x + q.dx*(frameCount-q.f), q.y + q.dy*(frameCount-q.f) - 15);
-    if(--q.t <= 0){
-      console.log(projectiles.map(q=>!!q), i, removeFrom(projectiles, i));
-      continue;
-    }
-  }
-  pop();
-  pop();
-  resetMatrix();
+  });
 }
-function removeFrom(array, position){
-  const v = array[position];
-  array[position] = undefined;
-  for(let i = array.length-1; i >= 0; i --){
-    if(array[i]){
-      array.splice(i + 1);
-      return v;
-    }
+
+const SD = {};
+const E = {
+  p: []
+};
+(async function(){
+  try {
+    const alias = {
+      "enemy_1002_nsabr": "e",
+      "build_char_286_cast3": "p"
+    };
+    await Promise.all(["enemy_1002_nsabr", "build_char_286_cast3"].map(async path => SD[alias[path]] = await loadSprite(path)));
+    console.log(SD);
+    document.getElementById("start").removeAttribute("disabled");
+    // app.stage.transform.scale.set(0.5, 0.5);
+  } catch (e) { console.trace(e); }
+})();
+// app.stage.setTransform(100, 100);
+/*
+const spine = new PIXI.spine.Spine(SD);
+spine.position.set(200,200);
+spine.state.setAnimation(0, 'Move', true);
+spine.scale.set(0.25, 0.25);
+app.stage.addChild(spine);
+*/
+
+function draw(){
+  if(dat === undefined || dat.s === undefined) return;
+  if(E.s === undefined) app.stage.addChild((E.s = new Entity(0, 0, 0, 0, 0, "p", dat.s.t)).container);
+  app.stage.transform.position.set(app.renderer.width/2-dat.s.x, app.renderer.height/2-dat.s.y);
+  E.s.update(dat.s.x, dat.s.y, dat.s.xv, dat.s.yv, dat.s.hp);
+  for(let i = dat.p.length-1; i >= 0; i --){
+    const p = dat.p[i];
+    if(E.p[i] === undefined) app.stage.addChild((E.p[i] = new Entity(0, 0, 0, 0, 0, "p", p.t)).container);
+    E.p[i].update(p.x, p.y, p.xv, p.yv, p.hp);
   }
-  array.splice(0);
 }

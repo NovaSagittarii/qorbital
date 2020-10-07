@@ -79,7 +79,7 @@ textarea {
   font-size: max(1.5vw, 20px);
   transition: ease-in-out 0.2s all;
 }
-#menu button:hover{
+#menu button:enabled:hover{
   /*animation-name: startHover;
   animation-duration: 1s;*/
   color: white; background-color: #FFD700;
@@ -320,4 +320,19 @@ textarea {
 .patchNote p{
   margin-left: 2vw;
   opacity: 1;
+}
+
+#display {
+  display: flex;
+  vertical-align: middle;
+  width: 100vw;
+  height: 100vh;
+}
+#display > canvas { /* letterbox into the screen and center */
+  /* position: absolute; */
+  margin: auto;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }

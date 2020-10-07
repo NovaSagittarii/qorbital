@@ -3,6 +3,7 @@ const b2rk16 = (2*Math.PI)/65535;
 const r2bk = 255/(2*Math.PI);
 const r2bk16 = 65535/(2*Math.PI);
 const Entity = require('./Entity.js');
+const COS45 = Math.sqrt(2)/2;
 class Player extends Entity {
   constructor(gameroom, socket, name, role){
     super(gameroom.spawnX, gameroom.spawnY, 0);
@@ -28,8 +29,9 @@ class Player extends Entity {
   }
   update(){
     this.decelerate(0.4);
-    this.xv2 = this.xv + (this.state&4 ? -this.ms : 0) + (this.state&8 ? this.ms : 0);
-    this.yv2 = this.yv + (this.state&1 ? -this.ms : 0) + (this.state&2 ? this.ms : 0);
+    const ms = ((this.state&4 || this.state&8) && (this.state&1 || this.state&2)) ? COS45*this.ms : this.ms;
+    this.xv2 = this.xv + (this.state&4 ? -ms : 0) + (this.state&8 ? ms : 0);
+    this.yv2 = this.yv + (this.state&1 ? -ms : 0) + (this.state&2 ? ms : 0);
     this.x += this.xv2;
     this.y += this.yv2;
     if(this.state&32){
@@ -55,8 +57,8 @@ class Player extends Entity {
         x: ~~this.x,
         y: ~~this.y,
         a: this.a,
-        xv: this.xv,
-        yv: this.yv,
+        xv: this.xv2,
+        yv: this.yv2,
         av: this.av,
         hp: this.hp,
         id: this.id,
@@ -67,8 +69,8 @@ class Player extends Entity {
         x: ~~this.x,
         y: ~~this.y,
         a: this.a,
-        xv: this.xv,
-        yv: this.yv,
+        xv: this.xv2,
+        yv: this.yv2,
         av: this.av,
         hp: this.hp,
         id: this.id,

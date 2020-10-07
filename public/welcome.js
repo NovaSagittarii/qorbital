@@ -1,7 +1,7 @@
 function start(){
   joinGame(document.getElementById('username').value);
   document.getElementById('menu').style.display = "none";
-  document.getElementById('display').style.display = "block";
+  document.getElementById('display').style.display = "flex";
   document.getElementById('bottomMenu').style.display = "none";
   document.getElementById("patchNotes").style.display = "none";
   joinGame = start = () => {};
