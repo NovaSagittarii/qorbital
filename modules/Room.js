@@ -4,6 +4,7 @@ const r2bk = 255/(2*Math.PI);
 const r2bk16 = 65535/(2*Math.PI);
 const Player = require('./Player.js');
 const Array3D = require('./Array3D.js');
+const HostileEntity = require('./HostileEntity.js');
 const LinearProjectile = require('./LinearProjectile.js');
 
 let config = {
@@ -15,14 +16,15 @@ class Room {
     this.spawnX = this.spawnY = 200;
     this.height = this.width = 400;
     this.capacity = Math.min(capacity || 4, 16);
-    this.projectiles = new Array3D(200, 10, 10, true);
-    this.playersIndex = new Array3D(200, 10, 10, true);
-    this.entities = new Array3D(200, 10, 10, true);
+    this.projectiles = new Array3D(100, 40, 40, true);
+    this.playersIndex = new Array3D(100, 40, 40, true);
+    this.entities = new Array3D(100, 40, 40, true);
     this.players = {};
     this.playerIdCounter = 0;
     this.entityIdCounter = 0;
     this.projectileIdCounter = 0;
     this.resume();
+    this.entities.add(new HostileEntity(this, 400, 400));
   }
   connect(socket, name){
     this.players[socket.id] = new Player(this, socket, name);
@@ -38,12 +40,27 @@ class Room {
     this.entities.updateAll(e => e.update());
     this.projectiles.updateAll((p, chunk) => {
       p.update();
-      const q = this.playersIndex.contextFrom(chunk.x, chunk.y);
-      for(let i = 0; i < q.length; i ++){
-        if(p.parent === q[i]) continue;
-        if(p.collidesWith(q[i])){
-          q.xv += p.xv/10;
-          q.yv += p.yv/10;
+      const players = this.playersIndex.contextFrom(chunk.x, chunk.y);
+      for(let i = 0; i < players.length; i ++){
+        const q = players[i];
+        if(p.parent === q) continue;
+        if(p.collidesWith(q)){
+          // q.xv += p.xv/10;
+          // q.yv += p.yv/10;
+          q.hp -= 4;
+          p.d = 0;
+          break;
+        }
+      }
+      const entities = this.entities.contextFrom(chunk.x, chunk.y);
+      for(let i = 0; i < entities.length; i ++){
+        const q = entities[i];
+        if(p.parent === q) continue;
+        // console.log(Math.hypot(p.x-q.x,q.y-q.x));
+        if(p.collidesWith(q)){
+          // q.xv += p.xv/10;
+          // q.yv += p.yv/10;
+          q.hp -= 4;
           p.d = 0;
           break;
         }
@@ -55,10 +72,10 @@ class Room {
   broadcastData(){
     this.playersIndex.forEachChunk(chunk => {
       if(chunk.a.length === 0) return; // don't bother if there aren't any players in there
-      const cpdat = chunk.getContextElements().map(p => p.export()); // chunk player data
+      const cpdat = this.playersIndex.nearbyElementsOf(chunk, 10).map(p => p.export()); // chunk player data
       const cdat = { // chunk data
-        q: this.projectiles.chunkFrom(chunk.x, chunk.y).getContextElements().map(e => e && e.export() ? e.export() : null),
-        e: this.entities.chunkFrom(chunk.x, chunk.y).getContextElements().map(e => e && e.export() || null)
+        q: this.projectiles.nearbyElementsFrom(chunk.x, chunk.y, 10).map(e => e && e.export() ? e.export() : null),
+        e: this.entities.nearbyElementsFrom(chunk.x, chunk.y, 10).map(e => e && e.export() || null)
       };
       const a = chunk.a;
       for(let i = a.length-1; i >= 0; i --){

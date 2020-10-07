@@ -6,13 +6,13 @@ const Entity = require('./Entity.js');
 const COS45 = Math.sqrt(2)/2;
 class Player extends Entity {
   constructor(gameroom, socket, name, role){
-    super(gameroom.spawnX, gameroom.spawnY, 0);
+    super(gameroom.spawnX, gameroom.spawnY, 0, 50);
     this.socket = socket;
     this.role = role;
     this.room = gameroom;
     this.name = name;
     this.hp = this.maxhp = 100;
-    this.hbr = 20; // diameter 40px when rendered on client
+    this.hbr = 50; // diameter approx 100px when rendered on client
     this.pfr = this.pf = 8; // primary fire rate | primary weapon frames
     this.atk = 1;
     this.matk = 1;
@@ -56,10 +56,10 @@ class Player extends Entity {
       return {
         x: ~~this.x,
         y: ~~this.y,
-        a: this.a,
+        // a: this.a,
         xv: this.xv2,
         yv: this.yv2,
-        av: this.av,
+        // av: this.av,
         hp: this.hp,
         id: this.id,
         t: this.name
@@ -68,10 +68,10 @@ class Player extends Entity {
       return {
         x: ~~this.x,
         y: ~~this.y,
-        a: this.a,
+        // a: this.a,
         xv: this.xv2,
         yv: this.yv2,
-        av: this.av,
+        // av: this.av,
         hp: this.hp,
         id: this.id,
         t: this.name

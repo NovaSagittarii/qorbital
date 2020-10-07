@@ -8,7 +8,7 @@ const app = new Application({
   resolution: 1
 });
 
-function loadSprite(path){
+function loadSpineSprite(path){
   return new Promise((resolution, rej) => {
     try {
       const TD = new TextDecoder("utf-8");
@@ -39,16 +39,28 @@ function loadSprite(path){
 
 const SD = {};
 const E = {
-  p: []
+  p: [], // players
+  e: [], // entities   ?
+  q: []  // projectile ?
 };
 (async function(){
   try {
-    const alias = {
+    const aliasSD = {
       "enemy_1002_nsabr": "e",
       "build_char_286_cast3": "p"
     };
-    await Promise.all(["enemy_1002_nsabr", "build_char_286_cast3"].map(async path => SD[alias[path]] = await loadSprite(path)));
+    await Promise.all(Object.keys(aliasSD).map(async path => SD[aliasSD[path]] = await loadSpineSprite(path)));
     console.log(SD);
+    const aliasE = {
+      "trail_08.png": "t8"
+    };
+    const SpriteTextures = await new Promise(res => {
+      const l = new PIXI.loaders.Loader("/assets/");
+      Object.keys(aliasE).forEach(k => l.add(aliasE[k], k));
+      l.load((l,r) => res(r));
+    });
+    console.log(SpriteTextures);
+    Object.keys(SpriteTextures).forEach(k => SD[k] = SpriteTextures[k]);
     document.getElementById("start").removeAttribute("disabled");
     // app.stage.transform.scale.set(0.5, 0.5);
   } catch (e) { console.trace(e); }
@@ -71,5 +83,25 @@ function draw(){
     const p = dat.p[i];
     if(E.p[i] === undefined) app.stage.addChild((E.p[i] = new Entity(0, 0, 0, 0, 0, "p", p.t)).container);
     E.p[i].update(p.x, p.y, p.xv, p.yv, p.hp);
+  }
+  for(let i = Math.max(dat.e.length, E.e.length)-1; i >= 0; i --){
+    const p = dat.e[i];
+    if(p === undefined){
+      E.e[i].destroy(app.stage);
+      E.e.splice(i, 1);
+      continue;
+    }
+    if(E.e[i] === undefined) app.stage.addChild((E.e[i] = new Entity(0, 0, 0, 0, 0, "e")).container);
+    E.e[i].update(p.x, p.y, p.xv, p.yv, p.hp);
+  }
+  for(let i = Math.max(dat.q.length, E.q.length)-1; i >= 0; i --){
+    const p = dat.q[i];
+    if(p === undefined){
+      E.q[i].destroy(app.stage);
+      E.q.splice(i, 1);
+      continue;
+    }
+    if(E.q[i] === undefined) app.stage.addChild((E.q[i] = new Projectile(0, 0, "t8")).sprite);
+    E.q[i].update(p.x, p.y, p.x2, p.y2); // p.x2, p.y2, p.t
   }
 }

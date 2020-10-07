@@ -72,6 +72,18 @@ class Array3D {
   } */
   contextFrom(x, y){ return this.A3D[x][y].getContextElements(); }
   contextOf(e){ return this.chunkOf(e).getContextElements(); }
+  nearbyElementsFrom(x, y, s){ return this.nearbyElementsOf(this.A3D[x][y], s); }
+  nearbyElementsOf(e, s){
+    if(s < 1 || (s|0) !== s) throw "Non whole number size";
+    const output = [], i = e.x, j = e.y, widthChunks = this.widthChunks, heightChunks = this.heightChunks;
+    for(let k = -s; k <= s; k ++){
+      for(let l = -s; l <= s; l ++){
+        if(this.circular) output.push(...this.A3D[(i+k+widthChunks)%widthChunks][(j+l+heightChunks)%heightChunks].a);
+        else if(i+k >= 0 && j+l >= 0 && i+k < widthChunks && j+l < heightChunks) output.push(...this.A3D[i+k][j+l].a);
+      }
+    }
+    return output;
+  }
   forEachChunk(process){
     for(let i = 0; i < this.widthChunks; i ++)
       for(let j = 0; j < this.heightChunks; j ++)
