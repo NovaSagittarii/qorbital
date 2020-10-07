@@ -5,7 +5,7 @@ const data = {
     action: ["Relax", "Move", "Interact"]
   },
   e: {
-    maxhp: 1000,
+    maxhp: 400,
     name: "test",
     action: ["Idle", "Run_Loop", "Attack"]
   }

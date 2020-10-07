@@ -24,7 +24,8 @@ class Room {
     this.entityIdCounter = 0;
     this.projectileIdCounter = 0;
     this.resume();
-    this.entities.add(new HostileEntity(this, 400, 400));
+    this.entities.add(new HostileEntity(this, 400, 400, HostileEntity.STATIC));
+    this.entities.add(new HostileEntity(this, 400, 400, HostileEntity.RANDOM));
   }
   connect(socket, name){
     this.players[socket.id] = new Player(this, socket, name);
@@ -37,7 +38,9 @@ class Room {
   }
   update(){
     this.playersIndex.updateAll(e => e.update());
-    this.entities.updateAll(e => e.update());
+    this.entities.updateAll(e => e.update(), e => {
+      if(e.hp <= 0) this.entities.remove(e);
+    });
     this.projectiles.updateAll((p, chunk) => {
       p.update();
       const players = this.playersIndex.contextFrom(chunk.x, chunk.y);
