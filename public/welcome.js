@@ -91,6 +91,7 @@ document.getElementById("createGame").addEventListener('click', ()=>{
     i+=0.1;
      if(i >= 1){
        clearInterval(a);
+
      }
   }, 25);
 });
@@ -105,14 +106,18 @@ document.getElementById("modal-overlay").addEventListener('click', ()=>{
        clearInterval(a);
        document.getElementById("userModal").style.display= "none";
        document.getElementById("modal-overlay").style.display = "none";
+       updateLobbyList();
+       document.getElementById("lobbyListContainer").display = "none";
+       document.getElementById("playerListContainer").display = "none";
      }
   }, 25);
   }
 });
 
 //creating a sample lobby:
-function createLobby(name, id){
+function CreateLobby(name, id){
   this.name = name;
+  this.players = [];
   this.people = 1;
   this.id = id;
   this.append = function(){
@@ -126,22 +131,56 @@ function createLobby(name, id){
     ppl.className = "lobbyPpl";
     var join = document.createElement("button");
     join.textContent = "join";
+    join.addEventListener('click', ()=>{
+      this.waitList();
+    });
     cont.appendChild(label);
     cont.appendChild(join);
     cont.appendChild(ppl);
     cont.appendChild(document.createElement("br"));
     document.getElementById("lobbyListContainer").appendChild(cont);
   }
+  this.waitList = function(){
+    //change UI to have "back/leave," and boom
+    document.getElementById("modalTitle").textContent = name;
+    document.getElementById("lobbyListContainer").style.display = "none";
+    document.getElementById("linkHostLobby").style.display = "none";
+    document.getElementById("playerListContainer").style.display = "block";
+    for(var i = 0; i < this.players.length; i++){
+      this.players[i].app();
+    }
+  }
 }
-var lobbies = [];
+function PlayerBlock(name, pClass){
+    this.class = pClass;
+    this.name = name;
+    this.app = function(){
+      var cont = document.createElement("div");
+      cont.className = "playerBlock";
+      var n = document.createElement("span");
+      n.textContent = name;
+      n.className = "playerName";
+      var c = document.createElement("img");
+      c.className = "playerClass";
+      c.src = "/assets/Class-defender.png";
+      cont.appendChild(n);
+      cont.appendChild(c);
+      document.getElementById("playerListContainer").appendChild(cont);
+    }
+}
+var lobbies = {};
 for(var i = 0; i < 4; i++){
-  lobbies.push(new createLobby("POG",1));
+  lobbies[i + 1] = new CreateLobby("POG",i+1);
+  lobbies[i+1].players.push(new PlayerBlock("Thomas", "Defender"));
 }
 function updateLobbyList(){
   document.getElementById("lobbyListContainer").innerHTML = "";
-  for(var i = 0; i < lobbies.length; i++){
-    lobbies[i].append();
+  document.getElementById("lobbyListContainer").style.display = "block";
+  document.getElementById("linkHostLobby").style.display = "block";
+  document.getElementById("modalTitle").textContent = "Join a Lobby";
+  for(const key of Object.keys(lobbies)){
+    lobbies[key].append();
+    console.log(key);
   }
 }
-
 updateLobbyList();

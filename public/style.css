@@ -248,7 +248,39 @@ textarea {
 #createGame:hover{
   border-bottom: 1vh solid #FFD700;
 }
-
+#playerListContainer{
+  border: 5px solid #ededed;
+  width: 80%;
+  background-color: #ededed;
+  height: 60%;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 5px;
+  overflow-y: scroll;
+  display: none;
+}
+.playerBlock{
+  height: 3vh;
+  background-color: #808080;
+  vertical-align: middle;
+  border: 2px solid #808080;
+  border-radius: 5px;
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0.5vh;
+  color: white;
+  padding: 0.25vw;
+}
+.playerName{
+  float: left;
+  vertical-align: middle;
+  font-size: max(1.3vw, 9px);
+}
+.playerClass{
+  float: right;
+  height: 80%;
+}
 /* Patch Notes Area */
 @keyframes loadCont{
   0%   {opacity: 0.0;}
