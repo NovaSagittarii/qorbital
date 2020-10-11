@@ -12,7 +12,7 @@ class Projectile {
   }
   update(x, y, x2, y2){
     this.sprite.position.set((this.x = x), (this.y = y));
-    this.sprite.rotation = FastTrig.atan2(y2-y, x2-x);
+    this.sprite.rotation = Math.atan2(y2-y, x2-x);
   }
   destroy(stage){
     stage.removeChild(this.sprite);

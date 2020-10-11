@@ -47,7 +47,7 @@ function updateState(){
   if(socket){
     const ab = new ArrayBuffer(3);
     const p16 = new Uint16Array(ab, 0, 1);
-    p16[0] = ~~(FastTrig.atan2(mouseY-height/2, mouseX-width/2)*r2bk16);
+    p16[0] = ~~(Math.atan2(mouseY-height/2, mouseX-width/2)*r2bk16);
     const p8 = new Uint8Array(ab, 2, 1);
     p8[0] = keys[kb.U] << 0 | keys[kb.D] << 1 | keys[kb.L] << 2 | keys[kb.R] << 3 | keys[kb.A] << 4 | mouseButtons[0] << 5 | mouseButtons[1] << 6 | mouseButtons[2] << 7;
     socket.emit('input', ab);
