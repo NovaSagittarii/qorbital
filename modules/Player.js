@@ -51,18 +51,10 @@ class Player extends Entity {
   fireProjectile(angle){
     this.room.spawnProjectile(this, this.f, angle);
   }
-  export(detailed){
-    if(detailed)
+  export(personal){
+    if(personal)
       return {
-        x: ~~this.x,
-        y: ~~this.y,
-        // a: this.a,
-        xv: this.xv2,
-        yv: this.yv2,
-        // av: this.av,
-        hp: this.hp,
-        id: this.id,
-        t: this.name
+        id: this.id
       };
     else
       return {

@@ -70,13 +70,48 @@ function joinGame(name) {
   window.addEventListener('keydown', keyPressed);
   window.addEventListener('keyup', keyReleased);
   window.addEventListener('resize', updateWindowDimensions);
-  loop();
   // loop();
 }
-let dat = {};
+const DATA = {
+  E: {}, // entity / enemies
+  P: {}, // proj
+  Q: {}, // players
+  S: {}, // self
+};
+let f = 0; // "frames" of updates
 function update(raw){
-  dat = JSON.parse(raw);
-  // console.log(dat);
+  f ++;
+  raw = JSON.parse(raw);
+  // i think some reduction can be done here... *probably?*
+  for(let i = raw.e.length-1; i >= 0; i --){
+    const e = raw.e[i];
+    e.f = f;
+    DATA.E[e.id] = e;
+    if(!E.EO[e.id]){
+      E.EO[e.id] = true; //                         id,   type, name, hp, x, y, xv, yv
+      app.stage.addChild((E.E[E.E.length] = new Entity(e.id, "p")).container);
+    }
+  }
+  for(let i = raw.p.length-1; i >= 0; i --){
+    const p = raw.p[i];
+    p.f = f;
+    if(p.id === raw.s.id) DATA.S = p;
+    DATA.P[p.id] = p;
+    if(!E.PO[p.id]){
+      E.PO[p.id] = true; //                            id,   type, name, hp, x, y, xv, yv
+      app.stage.addChild((E.P[E.P.length] = new Entity(p.id, "e1")).container);
+    }
+  }
+  for(let i = raw.q.length-1; i >= 0; i --){
+    const q = raw.q[i];
+    q.f = f;
+    DATA.Q[q.id] = q;
+    if(!E.QO[q.id]){
+      E.QO[q.id] = true; //                                id,   type, x, y, xv, yv
+      app.stage.addChild((E.Q[E.Q.length] = new Projectile(q.id, "t8")).sprite);
+    }
+  }
+  draw();
 }
 let drawInterval;
 function loop(){

@@ -39,14 +39,18 @@ function loadSpineSprite(path){
 
 const SD = {};
 const E = {
-  p: [], // players
-  e: [], // entities   ?
-  q: []  // projectile ?
+  E: [], // entities
+  EO: {},
+  P: [], // players
+  PO: {},
+  Q: [], // projectiles
+  QO: {},
 };
 (async function(){
   try {
     const aliasSD = {
-      "enemy_1002_nsabr": "e",
+      "enemy_1002_nsabr": "e1",
+      "enemy_1003_ncbow": "b1",
       "build_char_286_cast3": "p"
     };
     await Promise.all(Object.keys(aliasSD).map(async path => SD[aliasSD[path]] = await loadSpineSprite(path)));
@@ -75,33 +79,40 @@ app.stage.addChild(spine);
 */
 
 function draw(){
-  if(dat === undefined || dat.s === undefined) return;
-  if(E.s === undefined) app.stage.addChild((E.s = new Entity(0, 0, 0, 0, 0, "p", dat.s.t)).container);
-  app.stage.transform.position.set(app.renderer.width/2-dat.s.x, app.renderer.height/2-dat.s.y);
-  E.s.update(dat.s.x, dat.s.y, dat.s.xv, dat.s.yv, dat.s.hp);
-  for(let i = dat.p.length-1; i >= 0; i --){
-    const p = dat.p[i];
-    if(E.p[i] === undefined) app.stage.addChild((E.p[i] = new Entity(0, 0, 0, 0, 0, "p", p.t)).container);
-    E.p[i].update(p.x, p.y, p.xv, p.yv, p.hp);
-  }
-  for(let i = Math.max(dat.e.length, E.e.length)-1; i >= 0; i --){
-    const p = dat.e[i];
-    if(p === undefined){
-      E.e[i].destroy(app.stage);
-      E.e.splice(i, 1);
+  if(DATA.S === undefined) return;
+  app.stage.transform.position.set(app.renderer.width/2-DATA.S.x, app.renderer.height/2-DATA.S.y);
+  for(let i = E.E.length-1; i >= 0; i --){
+    const e = E.E[i];
+    if(!e){E.E.splice(i, 1); continue;}
+    const d = DATA.E[e.id];
+    if(!d || d.f < f){
+      e.destroy(app.stage);
+      E.E.splice(i, 1);
+      delete E.E[e.id];
+      delete E.EO[e.id];
       continue;
-    }
-    if(E.e[i] === undefined) app.stage.addChild((E.e[i] = new Entity(0, 0, 0, 0, 0, "e")).container);
-    E.e[i].update(p.x, p.y, p.xv, p.yv, p.hp);
+    } else e.update(d.x, d.y, d.xv, d.yv, d.hp);
   }
-  for(let i = Math.max(dat.q.length, E.q.length)-1; i >= 0; i --){
-    const p = dat.q[i];
-    if(p === undefined){
-      E.q[i].destroy(app.stage);
-      E.q.splice(i, 1);
+  for(let i = E.P.length-1; i >= 0; i --){
+    const e = E.P[i];
+    if(!e){E.P.splice(i, 1); continue;}
+    const d = DATA.P[e.id];
+    if(!d || d.f < f){
+      E.P.splice(i, 1)[0].destroy(app.stage);
+      delete E.P[e.id];
+      delete E.PO[e.id];
       continue;
-    }
-    if(E.q[i] === undefined) app.stage.addChild((E.q[i] = new Projectile(0, 0, "t8")).sprite);
-    E.q[i].update(p.x, p.y, p.x2, p.y2); // p.x2, p.y2, p.t
+    } else e.update(d.x, d.y, d.xv, d.yv, d.hp);
+  }
+  for(let i = E.Q.length-1; i >= 0; i --){
+    const e = E.Q[i];
+    if(!e){E.Q.splice(i, 1); continue;}
+    const d = DATA.Q[e.id];
+    if(!d || d.f < f){
+      E.Q.splice(i, 1)[0].destroy(app.stage);
+      delete E.Q[e.id];
+      delete E.QO[e.id];
+      continue;
+    } else e.update(d.x, d.y, d.x2, d.y2);
   }
 }

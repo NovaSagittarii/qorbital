@@ -1,23 +1,23 @@
 const data = {
   p: {
-    maxhp: 100,
-    name: "unnamed player",
+    maxhp: 400,
+    name: "test",
     action: ["Relax", "Move", "Interact"]
   },
-  e: {
-    maxhp: 400,
+  e1: {
+    maxhp: 100,
     name: "test",
     action: ["Idle", "Run_Loop", "Attack"]
   }
 };
 class Entity {
-  constructor(x, y, xv, yv, hp, type, name){
-    if(!SD[type] || !data[type]) throw "Invalid Entity type";
-    this.x = x;
-    this.y = y;
-    this.xv = xv;
-    this.yv = yv;
-    this.hp = hp;
+  constructor(id, type, name, hp, x, y, xv, yv){
+    if(!SD[type] || !data[type]) throw "Invalid Entity type " + type;
+    this.x = x || 0;
+    this.y = y || 0;
+    this.xv = xv || 0;
+    this.yv = yv || 0;
+    this.hp = hp || 0;
     this.maxhp = data[type].maxhp;
     this.container = new PIXI.Container();
     this.sprite = new PIXI.spine.Spine(SD[type]);
@@ -36,6 +36,7 @@ class Entity {
     this.container.addChild(this.text);
     this.container.addChild(this.rect);
     this.requestedAnimation = 0;
+    this.id = id;
     this.type = type;
   }
   step(){
@@ -46,7 +47,7 @@ class Entity {
     this.container.position.set((this.x = x), (this.y = y));
     this.xv = xv;
     this.yv = yv;
-    this.rect.width = 1.5*this.xo*(this.hp = hp)/this.maxhp;
+    this.rect.width = Math.abs(1.5*this.xo*(this.hp = hp)/this.maxhp);
     if(this.xv < 0) this.sprite.scale.x = -1/3;
     if(this.xv > 0) this.sprite.scale.x = 1/3;
     if(this.xv !== 0 || this.yv !== 0) this.requestedAnimation = data[this.type].action[1];

@@ -43,7 +43,8 @@ class LinearProjectile extends Projectile {
       y: this.y,
       x2: this.x + this.xv*this.d,
       y2: this.y + this.yv*this.d,
-      t: this.d
+      t: this.d,
+      id: this.id
     };
   }
 }
