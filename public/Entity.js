@@ -50,7 +50,8 @@ class Entity {
     this.rect.width = Math.abs(1.5*this.xo*(this.hp = hp)/this.maxhp);
     if(this.xv < 0) this.sprite.scale.x = -1/3;
     if(this.xv > 0) this.sprite.scale.x = 1/3;
-    this.requestedAnimation = data[this.type].action[(this.xv !== 0 || this.vy !== 0) ? 1 : 0];
+    if(this.xv !== 0 || this.yv !== 0) this.requestedAnimation = data[this.type].action[1];
+    else this.requestedAnimation = data[this.type].action[0];
     if(!this.sprite.state.tracks[0] || (this.sprite.state.tracks[0].animation.name !== this.requestedAnimation)){
       this.sprite.state.setAnimation(0, this.requestedAnimation, true);
       // console.log(this.requestedAnimation);
