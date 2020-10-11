@@ -63,8 +63,12 @@ class Array3D {
   array3D(){ return this.A3D; }
   add(e){
     if(e.x === undefined || e.y === undefined) throw "no";
+    e.x = Math.max(Math.min(e.x, this.width), 0);
+    e.y = Math.max(Math.min(e.y, this.height), 0);
     this.A1D.push(e);
     this.chunkOf(e).add(e);
+    /* this.A3D[0][0].add(e);
+    this.update(e, this.A3D[0][0]); */
   }
   /* surrounds(e, size){
     if(e.x === undefined || e.y === undefined) throw "no";

@@ -25,7 +25,7 @@ class Room {
     this.projectileIdCounter = 0;
     this.resume();
     this.entities.add(new HostileEntity(this, 400, 400, HostileEntity.STATIC));
-    this.entities.add(new HostileEntity(this, 400, 400, HostileEntity.RANDOM));
+    for(let i = 0; i < 100; i ++) this.entities.add(new HostileEntity(this, 400, 400, HostileEntity.RANDOM));
   }
   connect(socket, name){
     this.players[socket.id] = new Player(this, socket, name);
@@ -75,8 +75,8 @@ class Room {
   broadcastData(){
     this.playersIndex.forEachChunk(chunk => {
       if(chunk.a.length === 0) return; // don't bother if there aren't any players in there
-      const cpdat = this.playersIndex.nearbyElementsOf(chunk, 10).map(p => p.export()); // chunk player data
       const cdat = { // chunk data
+        p: this.playersIndex.nearbyElementsOf(chunk, 10).map(p => p.export()),
         q: this.projectiles.nearbyElementsFrom(chunk.x, chunk.y, 10).map(e => e && e.export() ? e.export() : null),
         e: this.entities.nearbyElementsFrom(chunk.x, chunk.y, 10).map(e => e && e.export() || null)
       };
@@ -84,7 +84,6 @@ class Room {
       for(let i = a.length-1; i >= 0; i --){
         // non optimized data transmission !! (still)
         const p = a[i];
-        cdat.p = cpdat.filter(q => q.id !== p.id);
         cdat.s = p.export(true);
         p.socket.emit('update', JSON.stringify(cdat));
       }
