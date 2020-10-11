@@ -1,3 +1,5 @@
+const FastTrig = require('../util/FastTrig.js');
+
 class Projectile {
   constructor(id, type, x, y){
     if(!SD[type]) throw "Invalid Projectile type";
