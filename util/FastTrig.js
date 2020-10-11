@@ -57,19 +57,19 @@
     FastTrig.prototype.atan2 = function (y, x) {
         if (x > 0.0) {
             if (y === 0.0) return y;
-            if (x === Number.POSITIVE_INFINITY) return quadDef(y);
+            if (x === Number.POSITIVE_INFINITY) return FastTrig._quadDef(y);
             else return this.atan(y / x);
         } else if (x < 0.0) {
             if (y === 0.0) return Math.PI * Math.sign(y);
 
-            if (x === Number.NEGATIVE_INFINITY) return quadDef(y);
+            if (x === Number.NEGATIVE_INFINITY) return FastTrig._quadDef(y);
             else if (y > 0.0) return Math.PI/2 - this.atan(x / y);
             else if (y < 0.0) return -Math.PI/2 - this.atan(x / y);
             else return Number.NaN;
-        } else return quadDefZeroOrNan(y, x);
+        } else return FastTrig._quadDefZeroOrNan(y, x);
     };
 
-    let quadDef = function (y) {
+    FastTrig._quadDef = function (y) {
         if (y === Number.POSITIVE_INFINITY) {
             return 3*Math.PI/4;
         } else if (y === Number.NEGATIVE_INFINITY) {
@@ -83,7 +83,7 @@
         }
     };
 
-    let quadDefZeroOrNan = function (y, x) {
+    FastTrig._quadDefZeroOrNan = function (y, x) {
         if (x === 0.0) {
             if (y === 0.0) {
                 if (Math.sign(x) < 0) {
