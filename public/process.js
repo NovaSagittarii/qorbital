@@ -1,5 +1,3 @@
-const FastTrig = require('../util/FastTrig.js');
-
 const keys = [];
 const mouseButtons = [];
 const kb = {

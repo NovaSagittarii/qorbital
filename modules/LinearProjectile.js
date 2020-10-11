@@ -1,5 +1,6 @@
+const Entity = require('./Entity.js');
 const Projectile = require('./Projectile.js');
-const FastTrig = require('../util/FastTrig.js');
+const FMath = Entity.FMathInstance;
 
 class LinearProjectile extends Projectile {
   constructor(parent, x, y, a, type){
@@ -8,8 +9,8 @@ class LinearProjectile extends Projectile {
     this.y = y;
     this.a = a;
     this.v = 120;
-    this.xv = FastTrig.cos(this.a)*this.v + parent.xv2;
-    this.yv = FastTrig.sin(this.a)*this.v + parent.yv2;
+    this.xv = FMath.cos(this.a)*this.v + parent.xv2;
+    this.yv = FMath.sin(this.a)*this.v + parent.yv2;
     this.ud = Math.pow(Math.hypot(this.xv, this.yv), 2); // u val denominator
     this.type = type;
     this.d = 8;

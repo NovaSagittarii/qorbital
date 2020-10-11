@@ -1,5 +1,5 @@
 const Entity = require('./Entity.js');
-const FastTrig = require('../util/FastTrig.js');
+const FMath = Entity.FMathInstance;
 
 class HostileEntity extends Entity {
   constructor(room, x, y, ai){
@@ -17,8 +17,8 @@ class HostileEntity extends Entity {
         if(--this.t <= 0){
           this.t = ~~(100*Math.random() + 50);
           const a = ~~(8*Math.random())*Math.PI/4;
-          this.xv = 2*FastTrig.cos(a);
-          this.yv = 2*FastTrig.sin(a);
+          this.xv = 2*FMath.cos(a);
+          this.yv = 2*FMath.sin(a);
         }
         break;
     }
