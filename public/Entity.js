@@ -11,7 +11,7 @@ const data = {
   }
 };
 class Entity {
-  constructor(id, type, name, hp, x, y, xv, yv){
+  constructor(id, type, name, hp, x, y, xv, yv, state){
     if(!SD[type] || !data[type]) throw "Invalid Entity type " + type;
     this.x = x || 0;
     this.y = y || 0;
@@ -35,25 +35,60 @@ class Entity {
     this.container.addChild(this.sprite);
     this.container.addChild(this.text);
     this.container.addChild(this.rect);
-    this.requestedAnimation = 0;
+    this.requestedAnimationState = 0;
+    this.animationState = -1;
+    this.animationStateLock = false;
+    this.sprite.state.setEmptyAnimation(0);
     this.id = id;
+    this.state = state || 0;
     this.type = type;
   }
   step(){
     this.x += this.xv;
     this.y += this.yv;
   }
-  update(x, y, xv, yv, hp){
+  update(x, y, xv, yv, hp, s){
     this.container.position.set((this.x = x), (this.y = y));
     this.xv = xv;
     this.yv = yv;
+    this.state = s;
     this.rect.width = Math.abs(1.5*this.xo*(this.hp = hp)/this.maxhp);
     if(this.xv < 0) this.sprite.scale.x = -1/3;
     if(this.xv > 0) this.sprite.scale.x = 1/3;
-    this.requestedAnimation = data[this.type].action[(this.xv !== 0 || this.yv !== 0) ? 1 : 0];
-    if(!this.sprite.state.tracks[0] || (this.sprite.state.tracks[0].animation.name !== this.requestedAnimation)){
-      this.sprite.state.setAnimation(0, this.requestedAnimation, true);
-      // console.log(this.requestedAnimation);
+    this.updateAnimationState();
+  }
+  updateAnimationState(){
+    const state = this.sprite.state;
+    if(this.state & 1) this.requestedAnimationState = 2;
+    else if(this.xv !== 0 || this.yv !== 0) this.requestedAnimationState = 1;
+    else this.requestedAnimationState = 0;
+    if(!this.animationStateLock && this.requestedAnimationState !== this.animationState){
+      // console.log(this, this.requestedAnimationState);
+      switch(this.requestedAnimationState){
+        case 0: // idle
+          state.setAnimation(0, data[this.type].action[0], true).mixDuration = 0.2;
+          break;
+        case 1: // move
+          state.setAnimation(0, data[this.type].action[1], true).mixDuration = 0.2;
+          break;
+        case 2: // atk
+          this.animationStateLock = true; // can use track1 + alpha for mixed movement+attack?
+          /* TODO: note some have transition states */
+          //const t = state.setAnimation(0, data[this.type].action[2], true);
+          const t = state.setAnimation(1, data[this.type].action[2], true); t.alpha = 0.5;
+          t.mixDuration = 0.2;
+          t.listener = {
+            complete: () => {
+              if(!(this.state & 1)){
+                state.clearTrack(1);
+                this.animationStateLock = false;
+                this.updateAnimationState();
+              }
+            }
+          };
+          break;
+      }
+      this.animationState = this.requestedAnimationState;
     }
   }
   destroy(stage){

@@ -25,7 +25,7 @@ class Room {
     this.projectileIdCounter = 0;
     this.resume();
     this.entities.add(new HostileEntity(this, 400, 400, HostileEntity.STATIC));
-    for(let i = 0; i < 100; i ++) this.entities.add(new HostileEntity(this, 400, 400, HostileEntity.RANDOM));
+    // for(let i = 0; i < 100; i ++) this.entities.add(new HostileEntity(this, 400, 400, HostileEntity.RANDOM));
   }
   connect(socket, name){
     this.players[socket.id] = new Player(this, socket, name);

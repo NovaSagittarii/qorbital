@@ -13,7 +13,8 @@ class Player extends Entity {
     this.name = name;
     this.hp = this.maxhp = 100;
     this.hbr = 50; // diameter approx 100px when rendered on client
-    this.pfr = this.pf = 8; // primary fire rate | primary weapon frames
+    this.pfr = this.pf = 24; // primary fire rate | primary weapon frames
+    this.pfa = true; // primary attack (available? cuz there's like sprite timings and things)
     this.atk = 1;
     this.matk = 1;
     this.def = 1;
@@ -29,15 +30,22 @@ class Player extends Entity {
   }
   update(){
     this.decelerate(0.4);
-    const ms = ((this.state&4 || this.state&8) && (this.state&1 || this.state&2)) ? COS45*this.ms : this.ms;
+    const ms = ((this.state&32) || this.pf!=this.pfr ? (Math.max(this.pf-this.pfr+16, 4)/16) : 1) * ((this.state&4 || this.state&8) && (this.state&1 || this.state&2) ? COS45*this.ms : this.ms);
     this.xv2 = this.xv + (this.state&4 ? -ms : 0) + (this.state&8 ? ms : 0);
     this.yv2 = this.yv + (this.state&1 ? -ms : 0) + (this.state&2 ? ms : 0);
     this.x += this.xv2;
     this.y += this.yv2;
-    if(this.state&32){
+    if(this.state&32 || this.pf!=this.pfr){
       if(--this.pf <= 0){
-        this.fireProjectile(this.a);
-        this.pf = this.pfr;
+        if(this.pfa){
+          this.fireProjectile(this.a);
+          this.pfa = false;
+        }else{
+          if(this.pf <= -32){
+            this.pf = this.pfr;
+            this.pfa = true;
+          }
+        }
       }
       // console.log("fire from", this.id);
     }
@@ -49,7 +57,7 @@ class Player extends Entity {
     // console.log(b, this.a, this.f);
   }
   fireProjectile(angle){
-    this.room.spawnProjectile(this, this.f, angle);
+    this.room.spawnProjectile(this, 0, angle);
   }
   export(personal){
     if(personal)
@@ -66,6 +74,7 @@ class Player extends Entity {
         // av: this.av,
         hp: this.hp,
         id: this.id,
+        s: !!(this.state&32)<<0,
         t: this.name
       };
   }

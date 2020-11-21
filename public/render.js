@@ -102,7 +102,7 @@ function draw(){
       delete E.P[e.id];
       delete E.PO[e.id];
       continue;
-    } else e.update(d.x, d.y, d.xv, d.yv, d.hp);
+    } else e.update(d.x, d.y, d.xv, d.yv, d.hp, d.s);
   }
   for(let i = E.Q.length-1; i >= 0; i --){
     const e = E.Q[i];
